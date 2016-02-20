@@ -13,7 +13,7 @@ set :port, ARGV[0].to_i
 get '/' do
 
   if !request.websocket?
-    erb :single
+    erb :keyboard
   else
     request.websocket do |ws|
       ws.onopen do
