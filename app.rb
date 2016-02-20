@@ -13,7 +13,7 @@ set :port, ARGV[0].to_i
 get '/' do
 
   if !request.websocket?
-    erb :keyboard
+    erb :sensors
   else
     request.websocket do |ws|
       ws.onopen do
@@ -29,6 +29,10 @@ get '/' do
       end
     end
   end
+end
+
+get '/settings' do
+  erb :settings
 end
 
 get '/blah' do

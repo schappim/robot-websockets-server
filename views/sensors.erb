@@ -13,7 +13,8 @@
 
 <body>
 	<div id="">Distance:<span id="distanceMeasurement"></span></div>
-	<div id="">Servo:<span id="pos"></span></div>
+    <div id="">Servo:<span id="pos"></span></div>
+	<div id="">[<a href="/settings">Settings</a>]</div>
 	<div id="zone_joystick"></div>
 
 <script type="text/javascript" src="/jquery.js"></script>
@@ -100,9 +101,12 @@ Mousetrap.bind('space', function() { ws.send('S'); ws.send('S'); }, 'keyup');
 Mousetrap.bind('a', function() { ws.send('A'); }, 'keydown');
 Mousetrap.bind('d', function() { ws.send('D'); }, 'keydown');
 
+var deviceId = localStorage.getItem("deviceId");
+var token = localStorage.getItem("token");
+
 
 function doPoll(){
-    $.get('https://api.particle.io/v1/devices/280024000547343337373737/distance?access_token=ff7e0cb400ebecee850da1ee9e8af123d988693b', function(data) {
+    $.get('https://api.particle.io/v1/devices/'+ deviceId + '/distance?access_token='+ token, function(data) {
     	console.log(data);
          document.getElementById("distanceMeasurement").textContent = data.result;
         setTimeout(doPoll,2000);
@@ -111,7 +115,7 @@ function doPoll(){
 doPoll();
 
 function doPoll2(){
-    $.get('https://api.particle.io/v1/devices/280024000547343337373737/pos?access_token=ff7e0cb400ebecee850da1ee9e8af123d988693b', function(data) {
+    $.get('https://api.particle.io/v1/devices/'+ deviceId +'/pos?access_token='+token, function(data) {
     	console.log(data);
          document.getElementById("pos").textContent = data.result;
         setTimeout(doPoll2,500);
