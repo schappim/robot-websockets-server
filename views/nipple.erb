@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title>Robot Remote Control</title>
+
+	<style>
+		body{font-family: Sans-Serif; color:#93c893;}
+	</style>
+</head>
+
+<body>
+<div id="zone_joystick"></div>
+
+<script type="text/javascript" src="/jquery.js"></script>
+<script type="text/javascript" src="/nipplejs.min.js"></script>
+<script type="text/javascript" src="/mousetrap.js"></script>
+<script type="text/javascript">
+
+var ws = new WebSocket('ws://' + window.location.host + window.location.pathname);
+
+var nipple = nipplejs.create({
+    zone: document.getElementById('zone_joystick'),
+    mode: 'static',
+    position: {
+        left: '50%',
+        top: '50%'
+    },
+    color: 'green',
+    size: 200
+});
+
+function bindNipple() {
+    nipple.on('start end', function(evt, data) {
+
+    }).on('move', function(evt, data) {
+
+       if(data.direction){
+       	//console.log(data.angle.degree)
+
+		var angle = parseInt(data.angle.degree);
+		switch (true) {
+    case (angle > 45 && angle < 139):
+        console.log("forward");
+        	ws.send('F');
+        break;
+    case (angle > 140 && angle < 215):
+        console.log("left");
+         ws.send('L');
+        break;
+    case (angle < 45 || angle > 315):
+        console.log("right");
+        ws.send('R');
+        break;
+    case (angle > 215 && angle < 315):
+        console.log("back");
+        ws.send('B');
+        break;
+    default:
+        console.log("Unknown (so stopping)");
+        ws.send('S');
+
+        break;
+	}
+       }
+
+    }).on('end',function(evt, data) {
+        	console.log('end');
+        	ws.send('S');
+
+        }
+
+    );
+}
+document.body.addEventListener("mouseup", function(){ws.send('S')});
+document.body.addEventListener("touchend", function(){ws.send('S')});
+
+var joystick = document.getElementById('zone_joystick');
+joystick.addEventListener("mouseup", function(){ws.send('S')});
+joystick.addEventListener("touchend", function(){ws.send('S')});
+
+bindNipple();
+
+Mousetrap.bind('up', function() { ws.send('F'); }, 'keydown');
+Mousetrap.bind('down', function() { ws.send('B'); }, 'keydown');
+Mousetrap.bind('left', function() { ws.send('L'); }, 'keydown');
+Mousetrap.bind('right', function() { ws.send('R'); }, 'keydown');
+Mousetrap.bind('space', function() { ws.send('S'); }, 'keydown');
+
+Mousetrap.bind('up', function() { ws.send('S'); ws.send('S'); }, 'keyup');
+Mousetrap.bind('down', function() { ws.send('S'); ws.send('S'); }, 'keyup');
+Mousetrap.bind('left', function() { ws.send('S'); ws.send('S'); }, 'keyup');
+Mousetrap.bind('right', function() { ws.send('S'); ws.send('S'); }, 'keyup');
+Mousetrap.bind('space', function() { ws.send('S'); ws.send('S'); }, 'keyup');
+
+Mousetrap.bind('a', function() { ws.send('A'); }, 'keydown');
+Mousetrap.bind('d', function() { ws.send('D'); }, 'keydown');
+
+</script>
+</body>
+
+</html>
